@@ -1,14 +1,26 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router } from '@reach/router'
+import ApolloClient from 'apollo-boost'
+import { ApolloProvider } from '@apollo/react-hooks'
 
 import 'bulma/css/bulma.css'
 import Navbar from './components/navbar'
 
+import Datasets from './views/datasets'
+
+const client = new ApolloClient()
+
 const App = () => (
-  <div className="container">
-    <Navbar />
-  </div>
+  <ApolloProvider client={client}>
+    <div className="container">
+      <Navbar />
+
+      <Router>
+        <Datasets path="/datasets/*" />
+      </Router>
+    </div>
+  </ApolloProvider>
 )
 
 document.addEventListener('DOMContentLoaded', () => {
