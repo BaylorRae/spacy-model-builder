@@ -11,5 +11,12 @@ module Types
     def datasets
       Dataset.order(created_at: :desc)
     end
+
+    field :text, Types::DatasetTextType, null: false do
+      argument :id, Integer, required: true
+    end
+    def text(id:)
+      DatasetText.find(id)
+    end
   end
 end
