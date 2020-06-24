@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Link } from '@reach/router'
+import { Link, navigate } from '@reach/router'
 import { gql } from 'apollo-boost'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { TextAnnotator } from 'react-text-annotate'
 
 const TEXT = gql`
@@ -19,6 +19,19 @@ const TEXT = gql`
           title
           color
         }
+      }
+    }
+  }
+`
+const ADD_ANNOTATIONS = gql`
+  mutation ($id: Int!, $annotations: [AnnotationInput!]!) {
+    textAddAnnotation(id: $id, annotations: $annotations) {
+      id
+      text
+      
+      dataset {
+        id
+        title
       }
     }
   }
@@ -45,10 +58,28 @@ const Annotate = ({ id }) => {
   const { loading, text, dataset, entities } = useText(id)
   const [value, setValue] = useState([])
   const [entityId, setEntityId] = useState('')
+  const [addAnnotations] = useMutation(ADD_ANNOTATIONS)
 
   const entity = entityId === ''
     ? {}
     : entities.find(e => e.id === parseInt(entityId))
+
+  function buildGraphQLInput() {
+    return {
+      id: parseInt(id),
+      annotations: value.map(annotation => ({
+        entityId: entities.find(e => e.title === annotation.tag).id,
+        selectionStart: annotation.start,
+        selectionEnd: annotation.end
+      }))
+    }
+  }
+
+  function saveAnnotations() {
+    addAnnotations({
+      variables: buildGraphQLInput()
+    }).then(() => navigate(`/datasets/${dataset.id}`))
+  }
 
   if (loading) {
     return <div>Loading...</div>
@@ -84,6 +115,14 @@ const Annotate = ({ id }) => {
           color: entity.color,
         })}
       />
+
+      <button
+        type="button"
+        onClick={saveAnnotations}
+        className="button is-primary"
+      >
+        Save Annotations
+      </button>
     </>
   )
 }
