@@ -7,6 +7,7 @@ import { ApolloProvider } from '@apollo/react-hooks'
 import 'bulma/css/bulma.css'
 import Navbar from './components/navbar'
 
+import Annotate from './views/annotate'
 import Datasets from './views/datasets'
 
 const client = new ApolloClient()
@@ -17,6 +18,7 @@ const App = () => (
       <Navbar />
 
       <Router>
+        <Annotate path="/annotate/:id" />
         <Datasets path="/datasets/*" />
       </Router>
     </div>

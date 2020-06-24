@@ -45,7 +45,7 @@ const Texts = ({ texts }) => (
         <tr key={text.id}>
           <td>{text.text.substr(0, 50)}...</td>
           <td>
-            <Link to={text.id.toString()}>Annotate &raquo;</Link>
+            <Link to={`/annotate/${text.id}`}>Annotate &raquo;</Link>
           </td>
         </tr>
       ))}
@@ -63,6 +63,7 @@ const Show = ({ id }) => {
       {!loading && (
         <>
           <h2 className="title">{dataset.title}</h2>
+          <div className="alert"><strong>Add annotation state</strong></div>
           <Texts texts={dataset.texts} />
         </>
       )}
