@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_24_161422) do
+ActiveRecord::Schema.define(version: 2020_06_24_163245) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,17 @@ ActiveRecord::Schema.define(version: 2020_06_24_161422) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["dataset_id"], name: "index_dataset_entities_on_dataset_id"
+  end
+
+  create_table "dataset_text_annotations", force: :cascade do |t|
+    t.bigint "dataset_text_id", null: false
+    t.integer "selection_start", null: false
+    t.integer "selection_end", null: false
+    t.bigint "dataset_entity_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["dataset_entity_id"], name: "index_dataset_text_annotations_on_dataset_entity_id"
+    t.index ["dataset_text_id"], name: "index_dataset_text_annotations_on_dataset_text_id"
   end
 
   create_table "dataset_texts", force: :cascade do |t|
@@ -39,5 +50,7 @@ ActiveRecord::Schema.define(version: 2020_06_24_161422) do
   end
 
   add_foreign_key "dataset_entities", "datasets"
+  add_foreign_key "dataset_text_annotations", "dataset_entities"
+  add_foreign_key "dataset_text_annotations", "dataset_texts"
   add_foreign_key "dataset_texts", "datasets"
 end
