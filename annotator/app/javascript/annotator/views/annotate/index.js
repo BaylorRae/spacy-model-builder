@@ -13,6 +13,12 @@ const TEXT = gql`
       dataset {
         id
         title
+
+        entities {
+          id
+          title
+          color
+        }
       }
     }
   }
@@ -30,16 +36,19 @@ function useText(id) {
     loading,
     error,
     text: loading || error ? null : data.text,
-    dataset: loading || error ? null : data.text.dataset
+    dataset: loading || error ? null : data.text.dataset,
+    entities: loading || error ? null : data.text.dataset.entities,
   }
 }
 
 const Annotate = ({ id }) => {
-  const { loading, text, dataset } = useText(id)
-  const [state, setState] = useState({
-    value: [],
-    tag: ''
-  })
+  const { loading, text, dataset, entities } = useText(id)
+  const [value, setValue] = useState([])
+  const [entityId, setEntityId] = useState('')
+
+  const entity = entityId === ''
+    ? {}
+    : entities.find(e => e.id === parseInt(entityId))
 
   if (loading) {
     return <div>Loading...</div>
@@ -49,10 +58,31 @@ const Annotate = ({ id }) => {
     <>
       <Link to={`/datasets/${dataset.id}`}>&laquo; {dataset.title}</Link>
       <h2 className="title">Annotate Text #{text.id}</h2>
+
+      <select
+        value={entityId}
+        onChange={e => setEntityId(e.currentTarget.value)}
+      >
+        <option value="">- Choose Entity Type -</option>
+        {entities.map(entity => (
+          <option
+            key={entity.id}
+            value={entity.id.toString()}
+          >
+            {entity.title}
+          </option>
+        ))}
+      </select>
+
       <TextAnnotator
         content={text.text}
-        value={state.value}
-        onChange={value => setState({...state, value})}
+        value={value}
+        onChange={setValue}
+        getSpan={span => ({
+          ...span,
+          tag: entity.title,
+          color: entity.color,
+        })}
       />
     </>
   )
