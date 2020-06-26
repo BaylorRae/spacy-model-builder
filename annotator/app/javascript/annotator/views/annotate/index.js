@@ -82,6 +82,18 @@ const Annotate = ({ id }) => {
     })))
   }, [loading])
 
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (/[1-9]/.test(e.key)) {
+        e.preventDefault()
+        setEntityId(parseInt(e.key))
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   const entity = entityId === ''
     ? {}
     : entities.find(e => e.id === parseInt(entityId))
