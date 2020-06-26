@@ -74,6 +74,10 @@ const Annotate = ({ id }) => {
   useEffect(() => {
     if (loading) return
 
+    if (entityId === '') {
+      setEntityId(entities[0].id)
+    }
+
     setValue(text.annotations.map(annotation => ({
       start: annotation.selectionStart,
       end: annotation.selectionEnd,
