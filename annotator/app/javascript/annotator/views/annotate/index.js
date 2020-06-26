@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, navigate } from '@reach/router'
 import { gql } from 'apollo-boost'
 import { useQuery, useMutation } from '@apollo/react-hooks'
@@ -9,6 +9,17 @@ const TEXT = gql`
     text(id: $id) {
       id
       text
+
+      annotations {
+        id
+        selectionStart
+        selectionEnd
+
+        entity {
+          id
+          title
+        }
+      }
       
       dataset {
         id
@@ -59,6 +70,17 @@ const Annotate = ({ id }) => {
   const [value, setValue] = useState([])
   const [entityId, setEntityId] = useState('')
   const [addAnnotations] = useMutation(ADD_ANNOTATIONS)
+
+  useEffect(() => {
+    if (loading) return
+
+    setValue(text.annotations.map(annotation => ({
+      start: annotation.selectionStart,
+      end: annotation.selectionEnd,
+      tag: entities.find(e => e.id === annotation.entity.id).title,
+      color: entities.find(e => e.id === annotation.entity.id).color
+    })))
+  }, [loading])
 
   const entity = entityId === ''
     ? {}
