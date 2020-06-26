@@ -4,6 +4,8 @@ import { gql } from 'apollo-boost'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { TextAnnotator } from 'react-text-annotate'
 
+import style from './annotate.module.css'
+
 const TEXT = gql`
   query ($id: Int!) {
     text(id: $id) {
@@ -128,30 +130,32 @@ const Annotate = ({ id }) => {
       <Link to={`/datasets/${dataset.id}`}>&laquo; {dataset.title}</Link>
       <h2 className="title">Annotate Text #{text.id}</h2>
 
-      <div className="buttons">
-        {entities.map((entity, i) => (
-          <button
-            key={entity.id}
-            className={"button " + (entity.id === entityId ? 'is-primary is-active' : 'outlined')}
-            onClick={() => setEntityId(entity.id)}
-            value={entity.id.toString()}
-          >
-            <span className="tag mr-3">{i + 1}</span>
-            {entity.title}
-          </button>
-        ))}
-      </div>
+      <div className={style.annotator}>
+        <div className="buttons">
+          {entities.map((entity, i) => (
+            <button
+              key={entity.id}
+              className={"button " + (entity.id === entityId ? 'is-primary is-active' : 'outlined')}
+              onClick={() => setEntityId(entity.id)}
+              value={entity.id.toString()}
+            >
+              <span className="tag mr-3">{i + 1}</span>
+              {entity.title}
+            </button>
+          ))}
+        </div>
 
-      <TextAnnotator
-        content={text.text}
-        value={value}
-        onChange={setValue}
-        getSpan={span => ({
-          ...span,
-          tag: entity.title,
-          color: entity.color,
-        })}
-      />
+        <TextAnnotator
+          content={text.text}
+          value={value}
+          onChange={setValue}
+          getSpan={span => ({
+            ...span,
+            tag: entity.title,
+            color: entity.color,
+          })}
+        />
+      </div>
 
       <button
         type="button"
