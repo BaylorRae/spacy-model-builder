@@ -112,20 +112,19 @@ const Annotate = ({ id }) => {
       <Link to={`/datasets/${dataset.id}`}>&laquo; {dataset.title}</Link>
       <h2 className="title">Annotate Text #{text.id}</h2>
 
-      <select
-        value={entityId}
-        onChange={e => setEntityId(e.currentTarget.value)}
-      >
-        <option value="">- Choose Entity Type -</option>
-        {entities.map(entity => (
-          <option
+      <div className="buttons">
+        {entities.map((entity, i) => (
+          <button
             key={entity.id}
+            className={"button " + (entity.id === entityId ? 'is-primary is-active' : 'outlined')}
+            onClick={() => setEntityId(entity.id)}
             value={entity.id.toString()}
           >
+            <span className="tag mr-3">{i + 1}</span>
             {entity.title}
-          </option>
+          </button>
         ))}
-      </select>
+      </div>
 
       <TextAnnotator
         content={text.text}
