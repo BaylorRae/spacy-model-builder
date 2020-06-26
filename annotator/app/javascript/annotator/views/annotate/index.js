@@ -90,7 +90,7 @@ const Annotate = ({ id }) => {
 
   useEffect(() => {
     function handleKeyDown(e) {
-      if (/[1-9]/.test(e.key)) {
+      if (!e.metaKey && /[1-9]/.test(e.key)) {
         e.preventDefault()
         setEntityId(parseInt(e.key))
       }
