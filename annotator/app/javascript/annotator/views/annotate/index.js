@@ -130,33 +130,39 @@ const Annotate = ({ id }) => {
       <Link to={`/datasets/${dataset.id}`}>&laquo; {dataset.title}</Link>
       <h2 className="title">Annotate Text #{text.id}</h2>
 
-      <div className={style.annotator}>
-        <div className="buttons">
-          {entities.map((entity, i) => (
-            <button
-              key={entity.id}
-              className={"button " + (entity.id === entityId ? 'is-primary is-active' : 'outlined')}
-              onClick={() => setEntityId(entity.id)}
-              value={entity.id.toString()}
-            >
-              <span className="tag mr-3">{i + 1}</span>
-              {entity.title}
-            </button>
-          ))}
+      <div className="columns">
+        <div className="column">
+          <div className={style.annotator}>
+            <div className="buttons">
+              {entities.map((entity, i) => (
+                <button
+                  key={entity.id}
+                  className={"button " + (entity.id === entityId ? 'is-primary is-active' : 'outlined')}
+                  onClick={() => setEntityId(entity.id)}
+                  value={entity.id.toString()}
+                >
+                  <span className="tag mr-3">{i + 1}</span>
+                  {entity.title}
+                </button>
+              ))}
+            </div>
+
+              <TextAnnotator
+                content={text.text}
+                value={value}
+                onChange={setValue}
+                getSpan={span => ({
+                  ...span,
+                  tag: entity.title,
+                  color: entity.color,
+                })}
+              />
+          </div>
         </div>
 
-        <pre>
-          <TextAnnotator
-            content={text.text}
-            value={value}
-            onChange={setValue}
-            getSpan={span => ({
-              ...span,
-              tag: entity.title,
-              color: entity.color,
-            })}
-          />
-        </pre>
+        <div className="column">
+          <LiveFromModel text={text.text} />
+        </div>
       </div>
 
       <button
@@ -167,6 +173,33 @@ const Annotate = ({ id }) => {
         Save Annotations
       </button>
     </>
+  )
+}
+
+const LiveFromModel = ({ text }) => {
+  const [entities, setEntities] = useState([])
+
+  useEffect(() => {
+    const formData = new FormData()
+    formData.append('text', text)
+    fetch('http://localhost:5000/annotate', {
+      method: 'POST',
+      body: formData
+    }).then(resp => resp.json()).then(resp => {
+      setEntities(resp.entities.map(entity => ({
+        start: entity.selectionStart,
+        end: entity.selectionEnd,
+        tag: entity.label
+      })))
+    })
+  }, [])
+
+  return (
+    <TextAnnotator
+        content={text}
+        value={entities}
+        onChange={() => null}
+    />
   )
 }
 
