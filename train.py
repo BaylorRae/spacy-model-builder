@@ -26,6 +26,7 @@ For more details, see the documentation:
 Compatible with: spaCy v2.1.0+
 Last tested with: v2.2.4
 """
+import sys
 import random
 import warnings
 from pathlib import Path
@@ -34,8 +35,8 @@ from spacy.util import minibatch, compounding
 import requests
 
 QUERY = """
-query {
-  dataset(id: 1) {
+query ($id: Int!) {
+  dataset(id: $id) {
     id
     title
     
@@ -58,7 +59,12 @@ query {
 }
 """
 
-resp = requests.post('http://localhost:3000/graphql', json={'query': QUERY})
+resp = requests.post('http://localhost:3000/graphql', json={
+    'query': QUERY,
+    'variables': {
+        'id': int(sys.argv[1])
+    }
+})
 
 TRAIN_DATA = [
     (
