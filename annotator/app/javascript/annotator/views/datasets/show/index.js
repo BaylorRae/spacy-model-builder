@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from '@reach/router'
 import { gql } from 'apollo-boost'
 import { useQuery } from '@apollo/react-hooks'
@@ -33,28 +33,61 @@ function useDataset(id) {
   }
 }
 
-const Texts = ({ texts }) => (
-  <table className="table">
-    <thead>
-      <tr>
-        <th>Summary</th>
-        <th>Annotated</th>
-        <th />
-      </tr>
-    </thead>
-    <tbody>
-      {texts.map(text => (
-        <tr key={text.id}>
-          <td>{text.text.substr(0, 50)}...</td>
-          <td>{text.annotatedAt ? 'Yes' : 'No'}</td>
-          <td>
-            <Link to={`/annotate/${text.id}`}>Annotate &raquo;</Link>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-)
+const FILTERS = {
+  'all': {
+    title: 'All',
+    call: (_) => true
+  },
+  'annotated': {
+    title: 'Annotated',
+    call: (text) => text.annotatedAt
+  },
+  'unannotated': {
+    title: 'Not Annotated',
+    call: (text) => !text.annotatedAt
+  }
+}
+
+const Texts = ({ texts }) => {
+  const [filter, setFilter] = useState('all')
+
+  return (
+    <>
+      <div className="buttons">
+        {Object.keys(FILTERS).map(f => (
+          <button
+            type="button"
+            className={"button " + (f === filter ? 'is-primary is-active' : 'outlined')}
+            onClick={() => setFilter(f)}
+          >
+            {FILTERS[f].title}
+          </button>
+        ))}
+      </div>
+
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Summary</th>
+            <th>Annotated</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {texts.filter(FILTERS[filter].call).map(text => (
+            <tr key={text.id}>
+              <td>{text.text.substr(0, 50)}...</td>
+              <td>{text.annotatedAt ? 'Yes' : 'No'}</td>
+              <td>
+                <Link to={`/annotate/${text.id}`}>Annotate &raquo;</Link>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  )
+}
 
 const AnnotatedPercentage = ({ texts }) => {
   const annotatedCount = texts.filter(text => text.annotatedAt).length
