@@ -56,6 +56,19 @@ const Texts = ({ texts }) => (
   </table>
 )
 
+const AnnotatedPercentage = ({ texts }) => {
+  const annotatedCount = texts.filter(text => text.annotatedAt).length
+  const percentage = (annotatedCount / texts.length) * 100
+
+  return (
+    <article className="message is-info">
+      <div className="message-body">
+        {annotatedCount} of { texts.length } texts annotated ({percentage.toPrecision(4)}%).
+      </div>
+    </article>
+  )
+}
+
 const Show = ({ id }) => {
   const { loading, dataset } = useDataset(id)
 
@@ -66,7 +79,7 @@ const Show = ({ id }) => {
       {!loading && (
         <>
           <h2 className="title">{dataset.title}</h2>
-          <div className="alert"><strong>Add annotation state</strong></div>
+          <AnnotatedPercentage texts={dataset.texts} />
           <Texts texts={dataset.texts} />
         </>
       )}
