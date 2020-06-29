@@ -145,16 +145,18 @@ const Annotate = ({ id }) => {
           ))}
         </div>
 
-        <TextAnnotator
-          content={text.text}
-          value={value}
-          onChange={setValue}
-          getSpan={span => ({
-            ...span,
-            tag: entity.title,
-            color: entity.color,
-          })}
-        />
+        <pre>
+          <TextAnnotator
+            content={text.text}
+            value={value}
+            onChange={setValue}
+            getSpan={span => ({
+              ...span,
+              tag: entity.title,
+              color: entity.color,
+            })}
+          />
+        </pre>
       </div>
 
       <button

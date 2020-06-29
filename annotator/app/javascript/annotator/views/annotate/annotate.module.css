@@ -7,7 +7,9 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.annotator > div {
+.annotator pre {
   font-size: 1.5rem;
-  line-height: 3rem;
+  border-radius: 0.12rem;
+  background-color: #fbfbfb;
+  border: 1px solid #ddd;
 }
