@@ -12,6 +12,7 @@ const DATASET = gql`
       texts {
         id
         text
+        annotatedAt
       }
     }
   }
@@ -37,6 +38,7 @@ const Texts = ({ texts }) => (
     <thead>
       <tr>
         <th>Summary</th>
+        <th>Annotated</th>
         <th />
       </tr>
     </thead>
@@ -44,6 +46,7 @@ const Texts = ({ texts }) => (
       {texts.map(text => (
         <tr key={text.id}>
           <td>{text.text.substr(0, 50)}...</td>
+          <td>{text.annotatedAt ? 'Yes' : 'No'}</td>
           <td>
             <Link to={`/annotate/${text.id}`}>Annotate &raquo;</Link>
           </td>
